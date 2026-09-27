@@ -349,6 +349,14 @@ A diferença entre a geração média das quatro fontes consideradas e a carga m
 
 A interpretação do intercâmbio foi mantida de forma descritiva, sem atribuir um sentido específico aos seus sinais positivos ou negativos sem a confirmação da convenção adotada pela fonte.
 
+#### Relação entre carga e geração no subsistema Norte
+
+A visualização a seguir apresenta a evolução mensal da carga média e da geração total média no subsistema Norte ao longo do período analisado. O gráfico evidencia que as duas séries apresentam comportamentos distintos ao longo do tempo, complementando a análise da relação entre geração e carga realizada nesta pergunta.
+
+![Relação entre carga e geração no subsistema Norte](relacao_geracao_carga_norte.png)
+
+*Figura 7 — Evolução mensal da carga média e da geração total média no subsistema Norte entre 2020 e 2025.*
+
 ---
 
 ## Considerações sobre os Resultados
