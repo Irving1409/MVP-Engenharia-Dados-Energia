@@ -1,6 +1,13 @@
 # MVP de Engenharia de Dados
 ## Análise da Geração e da Carga de Energia Elétrica no Brasil
 
+**Nome:** Irving Lui de Souza Caetano  
+**Matrícula:** 4052026000483  
+**Curso:** Ciência de Dados e Analytics — PUC-Rio  
+**Sprint:** Engenharia de Dados
+
+---
+
 Este repositório apresenta o desenvolvimento de um **MVP de Engenharia de Dados**, construído em ambiente de nuvem utilizando o **Databricks**.
 
 O projeto utiliza dados públicos disponibilizados pelo **Operador Nacional do Sistema Elétrico (ONS)**, por meio do conjunto de dados **Balanço de Energia nos Subsistemas**, considerando o período de **2020 a 2025**.
