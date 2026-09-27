@@ -67,6 +67,18 @@ Os arquivos anuais foram obtidos a partir da fonte pública do ONS e posteriorme
 
 ---
 
+## Carga dos Dados
+
+A coleta dos dados foi realizada no notebook `mvp2-download.ipynb`, responsável pelo download dos arquivos anuais do conjunto de dados **Balanço de Energia nos Subsistemas**, disponibilizado pelo Operador Nacional do Sistema Elétrico (ONS).
+
+Foram coletados arquivos no formato Parquet referentes aos anos de **2020 a 2025**. Durante a execução, o processo valida a disponibilidade dos arquivos e realiza a leitura dos dados com Apache Spark.
+
+Os seis arquivos anuais totalizaram **263.040 registros**. Após a coleta, esses dados foram utilizados como entrada para o notebook `mvp3-bronze.ipynb`, responsável pela ingestão e persistência da camada Bronze no Databricks.
+
+O código utilizado para a coleta e validação dos arquivos está disponível neste repositório no notebook `mvp2-download.ipynb`.
+
+---
+
 ## Arquitetura do Pipeline
 
 O projeto foi desenvolvido no **Databricks** seguindo os princípios da **Arquitetura Medalhão**, organizando os dados em diferentes camadas de acordo com o nível de processamento.
@@ -126,11 +138,102 @@ Cada tabela possui **360 registros**, correspondentes a 6 anos × 12 meses × 5 
 Os dados das camadas Bronze, Silver e Gold foram persistidos em tabelas no formato **Delta**.
 
 ---
+## Modelagem e Catálogo de Dados
 
-## Organização dos Notebooks
+A modelagem dos dados foi organizada seguindo a Arquitetura Medalhão, utilizando o catálogo `workspace` do Databricks. Foram criados três schemas para representar as diferentes etapas de processamento do pipeline:
 
-O desenvolvimento do MVP foi dividido em sete notebooks, organizados de acordo com as etapas do pipeline de dados.
+- `energia_bronze`: armazena os dados provenientes da fonte, mantendo os valores próximos ao formato de origem.
+- `energia_silver`: contém os dados tratados, padronizados e enriquecidos com atributos temporais.
+- `energia_gold`: disponibiliza os dados agregados e preparados para responder às perguntas de negócio do projeto.
 
+A imagem a seguir apresenta a organização desses schemas no Catalog Explorer do Databricks.
+
+![Organização dos schemas no Catalog Explorer do Databricks](catalago_schema_.png)
+
+*Figura 4 — Organização dos schemas Bronze, Silver e Gold no Catalog Explorer do Databricks.*
+
+### Catálogo das tabelas Gold
+
+A camada Gold foi modelada com granularidade mensal e contém quatro tabelas analíticas. Cada tabela possui 360 registros, correspondentes a 6 anos × 12 meses × 5 identificações presentes no conjunto de dados (quatro subsistemas regionais e o registro agregado do SIN).
+
+#### `carga_mensal_subsistema`
+
+Tabela destinada à análise mensal da carga de energia elétrica por subsistema.
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| `ano` | int | Ano de referência do registro. |
+| `mes` | int | Mês de referência do registro. |
+| `id_subsistema` | string | Identificador do subsistema. |
+| `nom_subsistema` | string | Nome do subsistema. |
+| `carga_media` | double | Valor médio mensal da carga. |
+| `carga_minima` | double | Menor valor de carga observado no período mensal. |
+| `carga_maxima` | double | Maior valor de carga observado no período mensal. |
+
+#### `geracao_mensal_subsistema`
+
+Tabela destinada à análise mensal da geração de energia elétrica por fonte e por subsistema.
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| `ano` | int | Ano de referência do registro. |
+| `mes` | int | Mês de referência do registro. |
+| `id_subsistema` | string | Identificador do subsistema. |
+| `nom_subsistema` | string | Nome do subsistema. |
+| `geracao_hidraulica_media` | double | Valor médio mensal da geração hidráulica. |
+| `geracao_termica_media` | double | Valor médio mensal da geração térmica. |
+| `geracao_eolica_media` | double | Valor médio mensal da geração eólica. |
+| `geracao_solar_media` | double | Valor médio mensal da geração solar. |
+
+#### `participacao_fontes_mensal`
+
+Tabela destinada à análise da participação percentual mensal das diferentes fontes de geração de energia elétrica.
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| `ano` | int | Ano de referência do registro. |
+| `mes` | int | Mês de referência do registro. |
+| `id_subsistema` | string | Identificador do subsistema. |
+| `nom_subsistema` | string | Nome do subsistema. |
+| `geracao_hidraulica_media` | double | Valor médio mensal da geração hidráulica. |
+| `geracao_termica_media` | double | Valor médio mensal da geração térmica. |
+| `geracao_eolica_media` | double | Valor médio mensal da geração eólica. |
+| `geracao_solar_media` | double | Valor médio mensal da geração solar. |
+| `geracao_total_media` | double | Soma das médias mensais das quatro fontes de geração consideradas. |
+| `participacao_hidraulica_pct` | double | Participação percentual da geração hidráulica. |
+| `participacao_termica_pct` | double | Participação percentual da geração térmica. |
+| `participacao_eolica_pct` | double | Participação percentual da geração eólica. |
+| `participacao_solar_pct` | double | Participação percentual da geração solar. |
+
+#### `geracao_carga_mensal`
+
+Tabela analítica que integra as informações mensais de carga, geração por fonte, geração total e intercâmbio líquido por subsistema.
+
+| Coluna | Tipo | Descrição |
+|---|---|---|
+| `ano` | int | Ano de referência do registro. |
+| `mes` | int | Mês de referência do registro. |
+| `id_subsistema` | string | Identificador do subsistema. |
+| `nom_subsistema` | string | Nome do subsistema. |
+| `carga_media` | double | Valor médio mensal da carga. |
+| `geracao_hidraulica_media` | double | Valor médio mensal da geração hidráulica. |
+| `geracao_termica_media` | double | Valor médio mensal da geração térmica. |
+| `geracao_eolica_media` | double | Valor médio mensal da geração eólica. |
+| `geracao_solar_media` | double | Valor médio mensal da geração solar. |
+| `geracao_total_media` | double | Soma das médias mensais das quatro fontes de geração consideradas. |
+| `intercambio_liquido_medio` | double | Valor médio mensal do intercâmbio líquido disponível no conjunto de dados. |
+
+A estrutura da tabela `geracao_carga_mensal` também pode ser observada diretamente no Catalog Explorer do Databricks:
+
+![Estrutura da tabela geracao_carga_mensal no Databricks](tabelas_persistidas_gold_completa.png)
+
+*Figura 5 — Estrutura e tipos de dados da tabela Gold `geracao_carga_mensal` no Catalog Explorer do Databricks.*
+
+## Pipeline de Dados
+
+O pipeline de dados foi desenvolvido no Databricks e dividido em sete notebooks, permitindo separar de forma organizada as etapas de definição do problema, preparação do ambiente, coleta, ingestão, tratamento, modelagem e análise dos dados.
+
+A execução segue o fluxo definido pela Arquitetura Medalhão, partindo dos arquivos Parquet disponibilizados pelo ONS, passando pelas camadas Bronze e Silver até a construção das tabelas analíticas na camada Gold. Os notebooks utilizados em cada etapa estão disponibilizados neste repositório GitHub e são descritos a seguir.
 ### `mvp0-objetivo.ipynb`
 Apresenta o contexto de negócio, o problema, o objetivo do MVP e as quatro perguntas de negócio que orientam o desenvolvimento do projeto.
 
@@ -158,9 +261,19 @@ Para reproduzir o pipeline completo, os notebooks devem ser executados na seguin
 
 `mvp0-objetivo` → `mvp1-preparacao` → `mvp2-download` → `mvp3-bronze` → `mvp4-silver` → `mvp5-gold` → `mvp6-analise`
 
+### Evidência de persistência das tabelas
+
+As tabelas resultantes do pipeline foram persistidas no Databricks utilizando o formato Delta. A camada Gold contém quatro tabelas analíticas, disponibilizadas no schema `workspace.energia_gold` e utilizadas posteriormente nas análises das perguntas de negócio.
+
+A imagem a seguir apresenta as quatro tabelas Gold persistidas no Catalog Explorer do Databricks.
+
+![Tabelas da camada Gold persistidas no Databricks](tabelas_persistidas_gold.png)
+
+*Figura 6 — Tabelas analíticas da camada Gold persistidas no schema `workspace.energia_gold` no Databricks.*
+
 ---
 
-## Principais Resultados
+## Análise de Dados — Principais Resultados
 
 As tabelas da camada Gold foram utilizadas para responder às quatro perguntas de negócio definidas no início do projeto.
 
