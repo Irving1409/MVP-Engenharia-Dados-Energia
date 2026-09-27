@@ -155,7 +155,7 @@ A modelagem dos dados foi organizada seguindo a Arquitetura Medalhão, utilizand
 
 A imagem a seguir apresenta a organização desses schemas no Catalog Explorer do Databricks.
 
-![Organização dos schemas no Catalog Explorer do Databricks](catalago_schema_.png)
+![Organização dos schemas no Catalog Explorer do Databricks](imgs/catalago_schema_.png)
 
 *Figura 4 — Organização dos schemas Bronze, Silver e Gold no Catalog Explorer do Databricks.*
 
@@ -232,7 +232,7 @@ Tabela analítica que integra as informações mensais de carga, geração por f
 
 A estrutura da tabela `geracao_carga_mensal` também pode ser observada diretamente no Catalog Explorer do Databricks:
 
-![Estrutura da tabela geracao_carga_mensal no Databricks](tabelas_persistidas_gold_completa.png)
+![Estrutura da tabela geracao_carga_mensal no Databricks](imgs/tabelas_persistidas_gold_completa.png)
 
 *Figura 5 — Estrutura e tipos de dados da tabela Gold `geracao_carga_mensal` no Catalog Explorer do Databricks.*
 
@@ -274,7 +274,7 @@ As tabelas resultantes do pipeline foram persistidas no Databricks utilizando o 
 
 A imagem a seguir apresenta as quatro tabelas Gold persistidas no Catalog Explorer do Databricks.
 
-![Tabelas da camada Gold persistidas no Databricks](tabelas_persistidas_gold.png)
+![Tabelas da camada Gold persistidas no Databricks](imgs/tabelas_persistidas_gold.png)
 
 *Figura 6 — Tabelas analíticas da camada Gold persistidas no schema `workspace.energia_gold` no Databricks.*
 
@@ -304,7 +304,7 @@ Na comparação entre as médias anuais de 2020 e 2025, todos os quatro subsiste
 
 #### Evolução mensal da carga por subsistema
 
-![Evolução mensal da carga nos subsistemas do SIN](carga_mensal_subsistemas.png.png)
+![Evolução mensal da carga nos subsistemas do SIN](imgs/carga_mensal_subsistemas.png.png)
 
 *Figura 1 — Evolução mensal da carga nos quatro subsistemas regionais do SIN no período de 2020 a 2025.*
 
@@ -321,7 +321,7 @@ A geração hidráulica apresentou a maior participação média entre as quatro
 
 #### Participação média das fontes de geração
 
-![Participação média das fontes de geração no SIN](participacao_fontes_geracao.png.png)
+![Participação média das fontes de geração no SIN](imgs/participacao_fontes_geracao.png.png)
 
 *Figura 2 — Participação média mensal das quatro fontes de geração consideradas no projeto, no período de 2020 a 2025.*
 
@@ -338,7 +338,7 @@ No período analisado, observa-se redução da participação relativa das fonte
 
 #### Evolução mensal da participação das fontes
 
-![Evolução mensal da participação das fontes de geração](evolucao_participacao_fontes.png.png)
+![Evolução mensal da participação das fontes de geração](imgs/evolucao_participacao_fontes.png.png)
 
 *Figura 3 — Evolução mensal da participação das fontes hidráulica, térmica, eólica e solar no SIN entre 2020 e 2025.*
 ### 4. Relação entre geração e carga
@@ -360,7 +360,7 @@ A interpretação do intercâmbio foi mantida de forma descritiva, sem atribuir 
 
 A visualização a seguir apresenta a evolução mensal da carga média e da geração total média no subsistema Norte ao longo do período analisado. O gráfico evidencia que as duas séries apresentam comportamentos distintos ao longo do tempo, complementando a análise da relação entre geração e carga realizada nesta pergunta.
 
-![Relação entre carga e geração no subsistema Norte](relacao_geracao_carga_norte.png)
+![Relação entre carga e geração no subsistema Norte](imgs/relacao_geracao_carga_norte.png)
 
 *Figura 7 — Evolução mensal da carga média e da geração total média no subsistema Norte entre 2020 e 2025.*
 
